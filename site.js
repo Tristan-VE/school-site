@@ -1,5 +1,11 @@
 /* Bouwt de pagina op uit content.js en regelt het grote venster (foto of 3D). */
 (function () {
+  try {
+    if (location.pathname.endsWith('/index.html')) {
+      history.replaceState(null, '',
+        location.pathname.slice(0, -'index.html'.length) + location.search + location.hash);
+    }
+  } catch (e) {}
   var S = window.SITE;
   var pagina = document.body.getAttribute('data-pagina');
   var P = S && S[pagina];
