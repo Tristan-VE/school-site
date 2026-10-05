@@ -1,0 +1,35 @@
+SITE AANPASSEN
+
+Pagina's
+  index.html (home), tinkercad.html, inventor.html, ldr-autootje.html.
+  De teksten van alle pagina's staan in content.js, onder home, tinkercad,
+  inventor en ldr.
+
+Teksten en blokjes
+  Alles staat in content.js. Open het in een teksteditor, pas de tekst aan
+  en sla op. Een extra blokje: kopieer een blok van { tot } en plak het
+  op de plek waar het moet staan (met een komma ertussen).
+
+Een nieuw 3D-model toevoegen (Inventor)
+  1. Exporteer het onderdeel uit Inventor als STL.
+  2. Zet het .stl-bestand in de map modellen/.
+  3. Zet een plaatje in de map images/ (een screenshot van het model).
+  4. Voeg in content.js bij "inventor" een blokje toe met
+     afbeelding: "images/jouw-plaatje.jpg" en
+     model: "modellen/jouw-model.stl".
+  5. Open je de site door op inventor.html te dubbelklikken (zonder
+     webserver)? Draai dan eenmalig:  python3 modellen-bijwerken.py
+     Op een echte website is dat niet nodig.
+
+Mappen
+  images/    plaatjes
+  modellen/  3D-bestanden (.stl)
+  lib/       de 3D-bibliotheek (three.js), niet aanpassen
+
+Code bij een schakeling (Tinkercad)
+  Zet een screenshot van je blokken-code in images/ en voeg bij het blokje
+  in content.js deze regels toe:
+    onderdelen: ["Zin over onderdeel 1.", "Zin over onderdeel 2."],
+    code: "images/code-les-3.png", codeBreedte: 400, codeHoogte: 600,
+    codetekst: "Wat de code doet."
+  Alles daarvan is optioneel; zonder code-regel verschijnt er geen codeblok.
