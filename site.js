@@ -1,9 +1,10 @@
 /* Bouwt de pagina op uit content.js en regelt het grote venster (foto of 3D). */
 (function () {
   try {
-    if (location.pathname.endsWith('/index.html')) {
-      history.replaceState(null, '',
-        location.pathname.slice(0, -'index.html'.length) + location.search + location.hash);
+    var p = location.pathname;
+    var schoon = p.replace(/index\.html$/, '').replace(/\.html$/, '');
+    if (schoon !== p) {
+      history.replaceState(null, '', schoon + location.search + location.hash);
     }
   } catch (e) {}
   var S = window.SITE;
