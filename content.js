@@ -55,11 +55,10 @@ window.SITE = {
   home: {
     tabtitel: "Tristan | Home",
     beschrijving: "Over Tristan, student Technicus Engineering.",
-    titel: "Hoi, ik ben Tristan",
+    titel: "Hallo, ik ben Tristan",
     alineas: [
       "Ik doe nu de opleiding Technicus Engineering. Op deze site laat ik zien wat ik tijdens de lessen heb gemaakt.",
-      "Ik vind het leuk om te snappen hoe dingen werken en om zelf te knutselen aan elektronica en techniek.",
-      "Hieronder vind je mijn schakelingen, mijn 3D-tekeningen en mijn LDR-autootje."
+      "op mijn site vind je mijn Tinkercad schema's, mijn 3D-tekeningen en het LDR-autootje."
     ],
     foto: "",          /* Wil je een foto van jezelf? Zet hem in images/ en vul bijvoorbeeld "images/tristan.jpg" in. */
     fotoAlt: "Foto van Tristan",
