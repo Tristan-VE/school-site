@@ -220,13 +220,13 @@ window.SITE = {
         model: "modellen/Opdracht_1a.stl"
       },
       {
-        titel: "Ronde stop",
+        titel: "Ronde dop",
         afbeelding: "images/inventor-stop.jpg", breedte: 882, hoogte: 954,
         model: "modellen/Opdracht_1b.stl"
       },
       {
-        titel: "Plaat met stop",
-        alt: "Een plaat met een ronde stop in het gat.",
+        titel: "Plaat met dop",
+        alt: "Een plaat met een ronde dop in het gat.",
         afbeelding: "images/inventor-plaat-met-stop.jpg", breedte: 590, hoogte: 706,
         model: "modellen/Opdracht_1c.stl"
       },
@@ -235,8 +235,8 @@ window.SITE = {
         afbeelding: "images/inventor-bol.jpg", breedte: 866, hoogte: 818,
         model: "modellen/Balletje.stl"
       },
-      {
-        titel: "Doos met vormpjes",
+	  {
+        titel: "Doosje met vormpjes",
         afbeeldingen: [
           {
             bestand: "images/inventor-doos-1.jpg", breedte: 1000, hoogte: 964,
@@ -248,6 +248,11 @@ window.SITE = {
           }
         ],
         model: "modellen/Extra_opdracht.stl"
+      },
+      {
+        titel: "Driehoek met gat",
+        afbeelding: "images/inventor-driehoek.png", breedte: 866, hoogte: 818,
+        model: "modellen/driehoek.stl"
       }
     ]
   }
