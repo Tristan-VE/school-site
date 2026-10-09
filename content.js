@@ -144,13 +144,13 @@ window.SITE = {
         codetekst: "Steeds staat één pin op HOOG en de andere vier op LAAG, met 1 seconde wachten ertussen. Daardoor brandt elke led om de beurt."
       },
       {
-        titel: "Les 4: Lichtsensor met zoemer",
-        tekst: "Een lichtsensor bepaalt wanneer de rgb-led en de zoemer aan gaan.",
+        titel: "Les 4: Lichtsensor met piezo motor",
+        tekst: "Een lichtsensor bepaalt wanneer de rgb-led en de piezo motor aan gaan.",
         onderdelen: [
           "De lichtsensor (LDR) is een weerstand die verandert met het licht. Samen met een vaste weerstand geeft hij de ATtiny een spanning die meeverandert met het licht.",
           "De ATtiny leest die spanning in op pin A2.",
           "De rgb-led kan in drie kleuren branden. De ATtiny stuurt elke kleur aan met een eigen pin.",
-          "De zoemer maakt geluid als zijn pin op HOOG staat.",
+          "De piezo maakt geluid als zijn pin op HOOG staat.",
           "De twee voltmeters meten de spanning op twee plekken in de schakeling."
         ],
         afbeelding: "images/tinkercad-lichtsensor.png", breedte: 432, hoogte: 314,
