@@ -1,0 +1,316 @@
+/* Bouwt de pagina op uit content.js en regelt het grote venster (foto of 3D). */
+(function () {
+  try {
+    var p = location.pathname;
+    var schoon = p.replace(/index\.html$/, '').replace(/\.html$/, '');
+    if (schoon !== p) {
+      history.replaceState(null, '', schoon + location.search + location.hash);
+    }
+  } catch (e) {}
+  var S = window.SITE;
+  var pagina = document.body.getAttribute('data-pagina');
+  var P = S && S[pagina];
+  if (!P) return;
+  var T = S.teksten;
+
+  function el(tag, cls, tekst) {
+    var e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (tekst) e.textContent = tekst;
+    return e;
+  }
+  function $(id) { return document.getElementById(id); }
+
+  /* ---------- vaste teksten ---------- */
+  document.title = P.tabtitel;
+  var meta = document.querySelector('meta[name="description"]');
+  if (meta) meta.setAttribute('content', P.beschrijving);
+  $('naam').textContent = S.naam;
+  $('ondertitel').textContent = S.ondertitel;
+  S.menu.forEach(function (m) {
+    var a = el('a', '', m.tekst);
+    a.href = m.link;
+    if (m.pagina === pagina) a.setAttribute('aria-current', 'page');
+    $('menu').appendChild(a);
+  });
+  $('voet-tekst').textContent = S.voettekst;
+  $('voet-link').textContent = P.voetlink.tekst;
+  $('voet-link').href = P.voetlink.link;
+
+  /* ---------- home ---------- */
+  if (pagina === 'home') {
+    var over = $('over');
+    var top = el('div', 'over-top');
+    var tekstkolom = el('div', 'over-tekst');
+    tekstkolom.appendChild(el('h2', '', P.titel));
+    (P.alineas || []).forEach(function (a) { tekstkolom.appendChild(el('p', '', a)); });
+    top.appendChild(tekstkolom);
+    if (P.foto) {
+      var f = el('img', 'over-foto');
+      f.src = P.foto;
+      f.alt = P.fotoAlt || '';
+      top.appendChild(f);
+      over.classList.add('met-foto');
+    }
+    over.appendChild(top);
+    if (P.kaarten && P.kaarten.length) {
+      var sec = el('div');
+      sec.appendChild(el('h2', 'kaarten-kop', P.kaartKop));
+      var kaarten = el('div', 'kaarten');
+      P.kaarten.forEach(function (k) {
+        var a = el('a', 'kaart');
+        a.href = k.link;
+        a.appendChild(el('h3', '', k.titel));
+        if (k.tekst) a.appendChild(el('p', '', k.tekst));
+        kaarten.appendChild(a);
+      });
+      sec.appendChild(kaarten);
+      over.appendChild(sec);
+    }
+    return;
+  }
+
+  /* ---------- inleiding ---------- */
+  var inl = Array.isArray(P.intro) ? P.intro : [P.intro];
+  inl.forEach(function (t) { $('intro').appendChild(el('p', 'intro', t)); });
+
+  /* ---------- blokjes ---------- */
+  var blokken = P.blokjes;
+  var raster = $('blokken');
+  if (!blokken.length) { raster.hidden = true; return; }
+
+  function plaatjes(item) {
+    if (item.afbeeldingen) return item.afbeeldingen;
+    if (item.afbeelding) {
+      return [{ bestand: item.afbeelding, alt: item.alt, breedte: item.breedte, hoogte: item.hoogte }];
+    }
+    return [];
+  }
+
+  blokken.forEach(function (item, i) {
+    var fig = el('figure');
+    fig.id = 'blok-' + (i + 1);
+    var lijst = plaatjes(item);
+    var houder = fig;
+    if (item.breed) fig.className = 'wide';
+    if (lijst.length > 1) {
+      fig.className = 'wide';
+      houder = el('div', 'pair');
+      fig.appendChild(houder);
+    }
+    if (!lijst.length) lijst = [null];
+
+    lijst.forEach(function (p, pj) {
+      var knop = el('button', item.model ? 'zoom model' : 'zoom');
+      knop.type = 'button';
+      var alt = (p && p.alt) || item.tekst || item.titel;
+      knop.setAttribute('aria-label', (item.model ? T.bekijk3d : T.vergroot) + alt);
+      if (p) {
+        var img = el('img');
+        img.src = p.bestand;
+        img.alt = alt;
+        if (p.breedte) img.width = p.breedte;
+        if (p.hoogte) img.height = p.hoogte;
+        img.loading = 'lazy';
+        knop.appendChild(img);
+      } else {
+        knop.classList.add('leeg');
+        knop.appendChild(el('span', '', '3D'));
+      }
+      knop.addEventListener('click', function () { openVenster(i, '', pj); });
+      houder.appendChild(knop);
+    });
+
+    var cap = el('figcaption');
+    cap.appendChild(el('h2', '', item.titel));
+    if (item.tekst) cap.appendChild(el('p', '', item.tekst));
+    if (item.onderdelen && item.onderdelen.length) {
+      var ul = el('ul', 'onderdelen');
+      item.onderdelen.forEach(function (z) { ul.appendChild(el('li', '', z)); });
+      cap.appendChild(ul);
+    }
+    fig.appendChild(cap);
+    if (item.code || item.foto) {
+      var cd = el('div', 'code');
+      var rij = el('div', 'knoprij');
+      if (item.foto) {
+        var fk = el('button', 'codeknop', T.fotoKnop || 'Foto bekijken');
+        fk.type = 'button';
+        fk.setAttribute('aria-label', (T.fotoBij || 'Foto bij ') + item.titel);
+        fk.addEventListener('click', function () { openVenster(i, 'foto'); });
+        rij.appendChild(fk);
+      }
+      if (item.code) {
+        var ck = el('button', 'codeknop', T.codeKnop || 'Code bekijken');
+        ck.type = 'button';
+        ck.setAttribute('aria-label', T.codeBij + item.titel);
+        ck.addEventListener('click', function () { openVenster(i, 'code'); });
+        rij.appendChild(ck);
+      }
+      cd.appendChild(rij);
+      if (item.codetekst && item.code) cd.appendChild(el('p', 'codetekst', item.codetekst));
+      fig.appendChild(cd);
+    }
+    raster.appendChild(fig);
+  });
+
+  /* ---------- inhoud: snel naar een les ---------- */
+  var gloeiTimer = null;
+  function lichtOp(fig) {
+    if (!fig) return;
+    blokken.forEach(function (b, k) {
+      var f = $('blok-' + (k + 1));
+      if (f) f.classList.remove('uitgelicht');
+    });
+    clearTimeout(gloeiTimer);
+    void fig.offsetWidth;
+    fig.classList.add('uitgelicht');
+    gloeiTimer = setTimeout(function () { fig.classList.remove('uitgelicht'); }, 2600);
+  }
+  function naarBlok(id, doeScroll) {
+    var fig = $(id);
+    if (!fig) return;
+    if (doeScroll) {
+      var rustig = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      fig.scrollIntoView({ behavior: rustig ? 'auto' : 'smooth', block: 'start' });
+    }
+    lichtOp(fig);
+  }
+  if (P.inhoudKop) {
+    var nav = el('nav', 'inhoud');
+    nav.setAttribute('aria-label', P.inhoudKop);
+    nav.appendChild(el('h2', '', P.inhoudKop));
+    var ul2 = el('ul');
+    blokken.forEach(function (b, k) {
+      var li = el('li');
+      var a = el('a', '', b.titel);
+      a.href = '#blok-' + (k + 1);
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        try { history.replaceState(null, '', location.pathname + location.search + '#blok-' + (k + 1)); } catch (x) {}
+        naarBlok('blok-' + (k + 1), true);
+      });
+      li.appendChild(a);
+      ul2.appendChild(li);
+    });
+    nav.appendChild(ul2);
+    $('intro').appendChild(nav);
+  }
+  if (/^#blok-\d+$/.test(location.hash)) {
+    var startId = location.hash.slice(1);
+    setTimeout(function () { naarBlok(startId, true); }, 150);
+  }
+
+  /* ---------- groot venster ---------- */
+  var dlg = $('viewer');
+  if (!dlg || !dlg.showModal) return;
+  var vimg = $('vimg'), v3d = $('v3d'), vhint = $('vhint');
+  var vtitle = $('vtitle'), vtext = $('vtext'), vcount = $('vcount');
+  $('vprev').textContent = T.vorige;
+  $('vclose').textContent = T.sluiten;
+  $('vnext').textContent = T.volgende;
+
+  var cur = 0, scene = null, token = 0, cache = {};
+  var fotoKleur = pagina === 'inventor' ? '#303744' : '#fff';
+
+  function bytes(b64) {
+    var bin = atob(b64), n = bin.length, u = new Uint8Array(n);
+    for (var k = 0; k < n; k++) u[k] = bin.charCodeAt(k);
+    return u.buffer;
+  }
+
+  /* Eerst gewoon het bestand ophalen. Lukt dat niet (bijv. omdat je de site
+     lokaal opent door te dubbelklikken), dan gebruiken we modellen.js. */
+  function haalModel(url) {
+    if (cache[url]) return Promise.resolve(cache[url]);
+    var ingebouwd = window.MODELLEN && window.MODELLEN[url];
+    var p;
+    if (location.protocol === 'file:') {
+      p = ingebouwd ? Promise.resolve(bytes(ingebouwd)) : Promise.reject(new Error('Niet in modellen.js: ' + url));
+    } else {
+      p = fetch(url).then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.arrayBuffer();
+      }).catch(function (e) {
+        if (ingebouwd) return bytes(ingebouwd);
+        throw e;
+      });
+    }
+    return p.then(function (buf) { cache[url] = buf; return buf; });
+  }
+
+  function toonFoto(item, melding, extra, pj) {
+    if (scene) scene.stop();
+    v3d.hidden = true;
+    var p = extra ? { bestand: extra.src, alt: extra.alt } : plaatjes(item)[pj || 0];
+    vimg.hidden = !p;
+    if (p) {
+      vimg.src = p.bestand;
+      vimg.alt = p.alt || item.tekst || item.titel;
+      vimg.style.background = fotoKleur;
+    }
+    vhint.textContent = melding || '';
+    vhint.hidden = !melding;
+  }
+
+  function toon3d(item) {
+    var mijn = ++token;
+    vimg.hidden = true;
+    v3d.hidden = false;
+    vhint.hidden = false;
+    vhint.textContent = T.laden;
+    if (!scene) {
+      try { scene = window.Weergave3D.maak(v3d); }
+      catch (e) { scene = null; toonFoto(item, T.geenWebgl); return; }
+    }
+    scene.formaat();
+    haalModel(item.model).then(function (buf) {
+      if (mijn !== token) return;
+      scene.laad(buf);
+      scene.start();
+      vhint.textContent = T.hint3d;
+    }).catch(function (e) {
+      if (window.console) console.warn('3D-model laden mislukt:', e);
+      if (mijn === token) toonFoto(item, T.foutModel);
+    });
+  }
+
+  function toon(i, soort, pj) {
+    cur = (i + blokken.length) % blokken.length;
+    var item = blokken[cur];
+    var titel = item.titel, tekst = item.tekst;
+    if (soort === 'code' && item.code) {
+      token++;
+      toonFoto(item, '', { src: item.code, alt: T.codeBij + item.titel });
+      titel = T.codeBij + item.titel;
+      tekst = item.codetekst;
+    } else if (soort === 'foto' && item.foto) {
+      token++;
+      var fb = (T.fotoBij || 'Foto bij ') + item.titel;
+      toonFoto(item, '', { src: item.foto, alt: item.fotoAlt || fb });
+      titel = fb;
+      tekst = item.fototekst;
+    } else if (item.model && window.Weergave3D) toon3d(item);
+    else { token++; toonFoto(item, '', null, pj); }
+    vtitle.textContent = titel;
+    vtext.textContent = tekst || '';
+    vtext.hidden = !tekst;
+    vcount.textContent = (cur + 1) + ' ' + T.van + ' ' + blokken.length;
+  }
+
+  function openVenster(i, soort, pj) { dlg.showModal(); toon(i, soort, pj); }
+
+  dlg.addEventListener('close', function () {
+    token++;
+    if (scene) { scene.weg(); scene = null; }
+  });
+  window.addEventListener('resize', function () { if (scene && dlg.open) scene.formaat(); });
+  $('vprev').addEventListener('click', function () { toon(cur - 1); });
+  $('vnext').addEventListener('click', function () { toon(cur + 1); });
+  $('vclose').addEventListener('click', function () { dlg.close(); });
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
+  dlg.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') toon(cur - 1);
+    if (e.key === 'ArrowRight') toon(cur + 1);
+  });
+})();

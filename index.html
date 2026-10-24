@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tristan | Tinkercad</title>
+<meta name="description" content="Schakelingen van Tristan, gemaakt in Tinkercad.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%237d1019'/%3E%3Ccircle cx='16' cy='16' r='7' fill='none' stroke='%23f0bd70' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    color-scheme: light dark;
+    --board: #7d1019;
+    --board-deep: #560a11;
+    --gold: #f0bd70;
+    --blush: #f5cfcf;
+    --page: #f6f3f3;
+    --ink: #2a1c1d;
+    --muted: #5b4648;
+    --line: #d6c6c6;
+    --focus: #7d1019;
+    --display: "Barlow Condensed", "Arial Narrow", "Barlow", system-ui, sans-serif;
+    --text: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --page: #181112; --ink: #f0e6e6; --muted: #bba3a5; --line: #3c2b2d; --focus: #f0bd70; }
+  }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: var(--text);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+  }
+  a:focus-visible, button:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+  header a:focus-visible, footer a:focus-visible, dialog#viewer button:focus-visible { outline-color: var(--gold); }
+
+  /* ---------- banner ---------- */
+  header {
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background-color: var(--board);
+    background-image: radial-gradient(70% 130% at 80% 45%, #9a2430 0%, rgba(154,36,48,0) 70%);
+  }
+  .traces { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .head { position: relative; max-width: 980px; margin: 0 auto; padding: 64px 24px 0; }
+  h1 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(3.4rem, 11vw, 6rem);
+    line-height: 0.95;
+    letter-spacing: -0.005em;
+    margin: 0;
+  }
+  .sub { margin: 10px 0 0; color: var(--blush); font-size: 1.25rem; font-weight: 500; }
+  nav { display: flex; gap: 30px; margin-top: 40px; }
+  nav a {
+    color: var(--blush);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 12px 0 13px;
+    border-bottom: 3px solid transparent;
+  }
+  nav a:hover { color: #fff; }
+  nav a[aria-current="page"] { color: #fff; border-bottom-color: var(--gold); }
+
+  .traces .tr path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 1.6s cubic-bezier(.4,0,.2,1) forwards; }
+  .traces .tr path:nth-child(2) { animation-delay: .1s; }
+  .traces .tr path:nth-child(3) { animation-delay: .2s; }
+  .traces .tr path:nth-child(4) { animation-delay: .3s; }
+  .traces .tr path:nth-child(5) { animation-delay: .15s; }
+  .traces .tr path:nth-child(6) { animation-delay: .25s; }
+  .traces .tr path:nth-child(7) { animation-delay: .35s; }
+  .traces .tr path:nth-child(8) { animation-delay: .45s; }
+  .traces .tr path:nth-child(n+9) { animation-delay: .2s; }
+  .traces .fade { opacity: 0; animation: appear .7s ease-out 1.1s forwards; }
+  @keyframes draw { to { stroke-dashoffset: 0; } }
+  @keyframes appear { to { opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) {
+    .traces .tr path { animation: none; stroke-dashoffset: 0; }
+    .traces .fade { animation: none; opacity: 1; }
+  }
+
+  /* ---------- content ---------- */
+  main { max-width: 980px; margin: 0 auto; padding: 44px 24px 80px; }
+  .intro { margin: 0 0 44px; font-size: 1.3rem; line-height: 1.45; color: var(--muted); max-width: 42ch; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px 32px; align-items: start; }
+  .wide { grid-column: 1 / -1; }
+  figure { margin: 0; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+
+  .zoom {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    border-radius: 8px;
+    cursor: zoom-in;
+    font: inherit;
+  }
+  .zoom img { display: block; width: 100%; height: auto; border-radius: 8px; }
+  .zoom::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237d1019' stroke-width='2.2' stroke-linecap='round'%3E%3Ccircle cx='10.5' cy='10.5' r='6'/%3E%3Cpath d='M15 15l5 5M10.5 8v5M8 10.5h5'/%3E%3C/svg%3E") center / 22px no-repeat;
+    box-shadow: 0 2px 10px rgba(60, 10, 16, 0.35);
+    opacity: 0;
+    transition: opacity .15s;
+  }
+  .zoom:hover::after, .zoom:focus-visible::after { opacity: 1; }
+  @media (hover: none) { .zoom::after { opacity: .9; } }
+
+  .tk img {
+    background: #fff;
+    border: 1px solid var(--line);
+    box-shadow: 0 1px 2px rgba(80, 20, 28, 0.08), 0 14px 30px -18px rgba(80, 20, 28, 0.45);
+  }
+  .iv img {
+    aspect-ratio: 4 / 3;
+    object-fit: contain;
+    background: #303744;
+    box-shadow: 0 14px 30px -18px rgba(80, 20, 28, 0.55);
+  }
+
+  figcaption { padding-top: 16px; }
+  h2 { font-family: var(--display); font-size: 1.7rem; font-weight: 600; line-height: 1.1; margin: 0 0 4px; }
+  figcaption p { margin: 0; color: var(--muted); max-width: 44ch; }
+
+  footer { background: var(--board-deep); color: var(--blush); }
+  .foot {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 30px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 32px;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  .foot p { margin: 0; font-family: var(--display); font-size: 1.35rem; font-weight: 600; color: #fff; }
+  .foot a { color: var(--gold); font-weight: 600; }
+
+  /* ---------- viewer ---------- */
+  dialog#viewer { border: 0; padding: 0; background: transparent; color: #fff; max-width: 96vw; max-height: 96vh; overflow: visible; }
+  dialog#viewer::backdrop { background: rgba(24, 6, 9, 0.9); }
+  .vbox { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+  #vimg { width: auto; height: auto; max-width: 92vw; max-height: 70vh; border-radius: 8px; }
+  #vcap { text-align: center; max-width: 60ch; }
+  #vcap h2 { color: #fff; margin: 0; }
+  #vcap p { color: #ecd2d2; margin: 2px 0 0; }
+  #vcount { color: #c9a5a8; font-size: .95rem; margin: 6px 0 0; }
+  .vbar { display: flex; gap: 10px; }
+  .vbar button {
+    font: inherit; font-weight: 600; color: #fff; cursor: pointer;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 6px; padding: 8px 18px;
+  }
+  .vbar button:hover { background: rgba(255,255,255,0.24); }
+
+  /* ---------- 3D ---------- */
+  [hidden] { display: none !important; }
+  .zoom.model::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237d1019' stroke-width='2' stroke-linejoin='round' stroke-linecap='round'%3E%3Cpath d='M12 3l8 4.5v9L12 21l-8-4.5v-9z'/%3E%3Cpath d='M4 7.5l8 4.5 8-4.5M12 12v9'/%3E%3C/svg%3E");
+    opacity: .95;
+  }
+  .zoom.leeg { aspect-ratio: 4 / 3; background: #303744; border-radius: 8px; display: grid; place-items: center; cursor: pointer; color: #fff; font-family: var(--display); font-size: 2.4rem; }
+  .vstage { display: flex; justify-content: center; }
+  .v3d { width: min(92vw, 860px); height: min(54vh, 560px); border-radius: 8px; overflow: hidden; background: #303744; }
+  .v3d canvas { display: block; width: 100%; height: 100%; touch-action: none; cursor: grab; }
+  .v3d canvas:active { cursor: grabbing; }
+  .vhint { margin: 0; color: #ecd2d2; font-size: .95rem; text-align: center; }
+
+  /* ---------- menu, inleiding, home ---------- */
+  nav { flex-wrap: wrap; gap: 8px 30px; }
+  #intro { margin: 0 0 44px; }
+  #intro .intro { margin: 0 0 16px; max-width: 54ch; }
+  #intro .intro:last-child { margin-bottom: 0; }
+  .over { display: grid; gap: 40px; }
+  .over.met-foto .over-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 320px); gap: 40px; align-items: start; }
+  .over h2 { margin: 0 0 14px; font-family: var(--display); font-size: 2.4rem; line-height: 1.1; font-weight: 600; }
+  .over-tekst p { margin: 0 0 14px; max-width: 54ch; font-size: 1.2rem; line-height: 1.5; color: var(--muted); }
+  .over-foto { display: block; width: 100%; height: auto; border-radius: 8px; }
+  .kaarten-kop { margin: 0 0 18px; font-family: var(--display); font-size: 1.7rem; font-weight: 600; }
+  .kaarten { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+  .kaart { display: block; padding: 22px; border: 1px solid var(--line); border-radius: 8px; color: inherit; text-decoration: none; transition: border-color .15s, transform .15s; }
+  .kaart:hover, .kaart:focus-visible { border-color: var(--board); transform: translateY(-2px); }
+  .kaart h3 { margin: 0 0 6px; font-family: var(--display); font-size: 1.6rem; font-weight: 600; color: var(--board); }
+  .kaart p { margin: 0; color: var(--muted); }
+  @media (prefers-color-scheme: dark) { .kaart h3 { color: var(--gold); } .kaart:hover, .kaart:focus-visible { border-color: var(--gold); } }
+  @media (max-width: 700px) { .over.met-foto .over-top { grid-template-columns: 1fr; } .over h2 { font-size: 2rem; } #intro { margin-bottom: 32px; } }
+
+  @media (prefers-contrast: more) {
+    :root { --muted: #2a1c1d; --line: #8a6f72; }
+    nav a, .sub { color: #fff; }
+  }
+
+  @media (max-width: 700px) {
+    .head { padding-top: 40px; }
+    nav { margin-top: 28px; }
+    .traces { opacity: .45; }
+    .traces .chip { display: none; }
+    main { padding-top: 32px; }
+    .intro { margin-bottom: 32px; font-size: 1.15rem; }
+  }
+  @media (max-width: 600px) {
+    .grid, .pair { grid-template-columns: 1fr; }
+    .grid { gap: 40px; }
+    .pair { gap: 20px; }
+  }
+</style>
+</head>
+<body data-pagina="home">
+<header>
+  <svg class="traces" viewBox="0 0 1200 320" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" focusable="false">
+    <g class="tr" fill="none" stroke="#b33a46" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+      <path pathLength="1" d="M843 112 H770 L734 76 H650 L614 40 V0"/>
+      <path pathLength="1" d="M843 176 H770 L734 212 H650 L614 248 V320"/>
+      <path pathLength="1" d="M843 144 H790"/>
+      <path pathLength="1" d="M843 208 H800 L770 238 V320"/>
+      <path pathLength="1" d="M1027 112 H1100 L1136 76 H1200"/>
+      <path pathLength="1" d="M1027 144 H1200"/>
+      <path pathLength="1" d="M1027 176 H1110 L1146 212 H1200"/>
+      <path pathLength="1" d="M1027 208 H1070 L1110 248 V320"/>
+      <path pathLength="1" d="M0 292 H190 L226 256 H330"/>
+      <path pathLength="1" d="M0 36 H110 L146 72 H250"/>
+    </g>
+    <g class="fade">
+      <g fill="none" stroke="#f0bd70" stroke-width="3">
+        <circle cx="782" cy="144" r="8"/>
+        <circle cx="330" cy="256" r="8"/>
+        <circle cx="250" cy="72" r="8"/>
+      </g>
+      <g fill="#f0bd70">
+        <circle cx="734" cy="76" r="3.5"/>
+        <circle cx="734" cy="212" r="3.5"/>
+        <circle cx="1136" cy="76" r="3.5"/>
+        <circle cx="1146" cy="212" r="3.5"/>
+      </g>
+      <g class="chip">
+        <rect x="860" y="88" width="150" height="144" rx="7" fill="#560a11" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
+        <path d="M927 88 A8 8 0 0 0 943 88" fill="none" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
+        <circle cx="877" cy="105" r="3.5" fill="rgba(255,255,255,.7)"/>
+        <g fill="#f0bd70">
+          <rect x="843" y="104.5" width="34" height="15" rx="3"/>
+          <rect x="843" y="136.5" width="34" height="15" rx="3"/>
+          <rect x="843" y="168.5" width="34" height="15" rx="3"/>
+          <rect x="843" y="200.5" width="34" height="15" rx="3"/>
+          <rect x="993" y="104.5" width="34" height="15" rx="3"/>
+          <rect x="993" y="136.5" width="34" height="15" rx="3"/>
+          <rect x="993" y="168.5" width="34" height="15" rx="3"/>
+          <rect x="993" y="200.5" width="34" height="15" rx="3"/>
+        </g>
+        <text x="935" y="167" text-anchor="middle" font-size="24" fill="rgba(255,255,255,.85)" style="font-family:'Barlow Condensed','Barlow',sans-serif;font-weight:600;letter-spacing:.04em">ATtiny</text>
+      </g>
+    </g>
+  </svg>
+  <div class="head">
+    <h1 id="naam"></h1>
+    <p class="sub" id="ondertitel"></p>
+    <nav id="menu" aria-label="Pagina's"></nav>
+  </div>
+</header>
+<main>
+  <div id="over" class="over"></div>
+  <noscript><p>Zet JavaScript aan om deze pagina te zien.</p></noscript>
+</main>
+<footer>
+  <div class="foot">
+    <p id="voet-tekst"></p>
+    <a id="voet-link" href="#"></a>
+  </div>
+</footer>
+<script src="content.js"></script>
+<script src="site.js"></script>
+</body>
+</html>
