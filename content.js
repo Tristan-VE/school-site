@@ -121,10 +121,10 @@ window.SITE = {
         fototekst: "De print van Les 3: de batterijaansluiting, de chipvoet en twee blauwe potmeters, nog zonder motoren."
       },
       {
-        titel: "Les 4: Motoren aansluiten",
-        tekst: "Het schema van Les 3 met twee motoren erbij, een boven en een onder de schakeling.",
+        titel: "Les 4: Servo motoren aansluiten",
+        tekst: "Het schema van Les 3 met twee servo motoren erbij, een boven en een onder de schakeling.",
         onderdelen: [
-          "Elke motor hangt aan een eigen transistor, want een pin van de ATtiny kan niet genoeg stroom voor een motor leveren.",
+          "Elke motor hangt aan een eigen transistor, want een pin van de ATtiny kan niet genoeg stroom voor een servo motor leveren.",
           "De rode draden brengen de spanning naar de motoren."
         ],
         afbeelding: "images/ldr-les4-motoren.png", breedte: 1492, hoogte: 994,
@@ -152,7 +152,7 @@ window.SITE = {
     beschrijving: "Schakelingen van Tristan, gemaakt in Tinkercad.",
     /* Meerdere alinea's? Zet ze als losse stukken tekst tussen [ ] met een komma ertussen. */
     intro: [
-      "Hieronder staan alle schema's die ik met tinkercad hebben gemaakt. in de lessen heb ik geleerd hoe ik met tinkercad om ga en wat elk onderdeel doet bijvoorbeeld hoe je een multimeter gebruikt. "
+      "Hieronder staan alle schema's die ik met tinkercad heb gemaakt. in de lessen heb ik geleerd hoe ik met tinkercad om ga en wat elk onderdeel doet. "
     ],
     voetlink: { tekst: "Inventor", link: "inventor.html" },
     blokjes: [
